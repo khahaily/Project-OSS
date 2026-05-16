@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProjectLibre</title>
+    <style>
+        :root {
+            --bg-blue: #0078d7;
+            --project-green-top: #0a2a1a;
+            --project-green-bottom: #041a0f;
+            --text-white: rgba(255, 255, 255, 0.9);
+            --dot-color: rgba(255, 255, 255, 0.6);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-blue);
+            font-family: "Segoe UI", "Selawik", Tahoma, sans-serif;
+            overflow: hidden;
+        }
+
+        .splash-container {
+            position: relative;
+            width: 520px;
+            height: 310px;
+            background: linear-gradient(to bottom, var(--project-green-top), var(--project-green-bottom));
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .title {
+            color: var(--text-white);
+            font-size: 72px;
+            font-weight: 300;
+            letter-spacing: -1.5px;
+            margin-bottom: 20px;
+            z-index: 3;
+        }
+
+        .loader {
+            display: flex;
+            gap: 10px;
+            z-index: 3;
+        }
+
+        .dot {
+            width: 5px;
+            height: 5px;
+            background-color: var(--dot-color);
+            border-radius: 50%;
+            opacity: 0.2;
+            animation: moveDot 1.6s infinite ease-in-out;
+        }
+
+        .dot:nth-child(1) { animation-delay: 0.0s; }
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+        .dot:nth-child(4) { animation-delay: 0.6s; }
+        .dot:nth-child(5) { animation-delay: 0.8s; }
+
+        @keyframes moveDot {
+            0%, 100% { transform: translateY(0); opacity: 0.2; }
+            50% { transform: translateY(-3px); opacity: 1; background-color: #fff; box-shadow: 0 0 8px rgba(255, 255, 255, 0.8); }
+        }
+    </style>
+</head>
+<body>
+    <div class="splash-container">
+        <h1 class="title">Project</h1>
+        <div class="loader">
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+</body>
+</html>

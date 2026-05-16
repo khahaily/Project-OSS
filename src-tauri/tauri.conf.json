@@ -1,0 +1,73 @@
+{
+  "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
+  "productName": "ProjectLibre",
+  "version": "0.1.0",
+  "identifier": "com.projectlibre.app",
+  "build": {
+    "frontendDist": "../out",
+    "devUrl": "http://localhost:3000",
+    "beforeDevCommand": "npm run dev",
+    "beforeBuildCommand": "npm run build"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "splashscreen",
+        "title": "",
+        "url": "/splash.html",
+        "width": 520,
+        "height": 310,
+        "center": true,
+        "decorations": false,
+        "alwaysOnTop": true,
+        "resizable": false,
+        "skipTaskbar": true
+      },
+      {
+        "label": "main",
+        "title": "ProjectLibre",
+        "url": "/",
+        "width": 1200,
+        "height": 800,
+        "center": true,
+        "visible": false,
+        "decorations": false,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": null,
+      "capabilities": [
+        {
+          "identifier": "default",
+          "windows": ["main", "splashscreen"],
+          "permissions": [
+            "core:default",
+            "core:window:allow-start-dragging",
+            "core:window:allow-minimize",
+            "core:window:allow-maximize",
+            "core:window:allow-close",
+            "core:window:allow-toggle-maximize",
+            "core:window:allow-is-maximized",
+            "core:window:allow-unmaximize"
+          ]
+        }
+      ]
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "android": {
+      "debugApplicationIdSuffix": ".debug"
+    }
+  }
+}
