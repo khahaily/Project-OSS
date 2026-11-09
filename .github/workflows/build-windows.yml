@@ -1,0 +1,57 @@
+# Build Project-OSS to a Windows NSIS installer on a Windows 10/11 x64 PC.
+# This script never downloads prebuilt binaries from unofficial sources.
+# It retrieves the source from https://github.com/mughalh/Project-OSS.
+$ErrorActionPreference = 'Stop'
+$Host.UI.RawUI.WindowTitle = 'Build Project-OSS Windows Installer'
+
+function NeedCommand([string]$Command, [string]$HelpUrl) {
+    if (-not (Get-Command $Command -ErrorAction SilentlyContinue)) {
+        throw "Thieu lenh $Command. Vui long cai dat: $HelpUrl ; sau do mo lai file nay."
+    }
+}
+
+Write-Host '=== Project-OSS: Windows 64-bit installer builder ===' -ForegroundColor Cyan
+Write-Host 'Yeu cau: Git, Node.js 20+, Rust/MSVC, Visual Studio C++ Build Tools, WebView2.'
+NeedCommand 'git' 'https://git-scm.com/download/win'
+NeedCommand 'node' 'https://nodejs.org/'
+NeedCommand 'npm' 'https://nodejs.org/'
+NeedCommand 'cargo' 'https://rustup.rs/'
+NeedCommand 'rustc' 'https://rustup.rs/'
+
+if (-not (Get-Command 'pnpm' -ErrorAction SilentlyContinue)) {
+    Write-Host 'Chua co pnpm. Dang cai pnpm@10...' -ForegroundColor Yellow
+    & npm install --global pnpm@10
+    if ($LASTEXITCODE -ne 0) { throw 'Khong the cai pnpm. Mo PowerShell voi quyen phu hop va thu lai.' }
+}
+
+$target = Join-Path $env:USERPROFILE 'Project-OSS'
+if (Test-Path (Join-Path $target '.git')) {
+    Write-Host "Da co ma nguon: $target" -ForegroundColor Gray
+    Set-Location $target
+    & git pull --ff-only
+    if ($LASTEXITCODE -ne 0) { throw 'Khong the cap nhat ma nguon; hay giai quyet thay doi git truoc.' }
+} elseif (Test-Path $target) {
+    throw "Thu muc $target ton tai nhung khong phai git repo; hay doi ten thu muc do."
+} else {
+    Write-Host 'Dang tai ma nguon Project-OSS...' -ForegroundColor Cyan
+    & git clone https://github.com/mughalh/Project-OSS.git $target
+    if ($LASTEXITCODE -ne 0) { throw 'Khong the tai ma nguon tu GitHub.' }
+    Set-Location $target
+}
+
+Write-Host 'Dang cai thu vien JavaScript...' -ForegroundColor Cyan
+& pnpm install --frozen-lockfile
+if ($LASTEXITCODE -ne 0) { throw 'pnpm install that bai. Xem thong bao phia tren.' }
+
+Write-Host 'Dang dong goi file .exe Windows (NSIS)...' -ForegroundColor Cyan
+& pnpm exec tauri build --bundles nsis
+if ($LASTEXITCODE -ne 0) {
+    throw 'Khong the build. Kiem tra Visual Studio C++ Build Tools (Desktop development with C++) va log phia tren.'
+}
+
+$outFolder = Join-Path $target 'src-tauri\target\release\bundle\nsis'
+$installers = @(Get-ChildItem $outFolder -Filter '*.exe' -File -ErrorAction SilentlyContinue)
+if ($installers.Count -eq 0) { throw 'Build xong nhung khong tim thay file setup.exe.' }
+Write-Host 'THANH CONG! File cai dat:' -ForegroundColor Green
+$installers | ForEach-Object { Write-Host $_.FullName -ForegroundColor Green }
+Start-Process explorer.exe $outFolder
